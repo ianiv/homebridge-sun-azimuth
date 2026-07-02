@@ -15,9 +15,15 @@ class SunAzimuthPlatform {
 
     // Initialize accessories
     this.sensors = {};
-    config.sensors.forEach((sensorConfig) => {
-      this.sensors[sensorConfig.name] = new SunAzimuthAccessory(this, log, sensorConfig, config);
-    });
+    if (!config || !Array.isArray(config.sensors) || config.sensors.length === 0) {
+      log('No sensors configured for homebridge-sun-azimuth. Skipping accessory setup.');
+      this.config = config || {};
+      this.config.sensors = [];
+    } else {
+      config.sensors.forEach((sensorConfig) => {
+        this.sensors[sensorConfig.name] = new SunAzimuthAccessory(this, log, sensorConfig, config);
+      });
+    }
 
     // Register new accessories after homebridge loaded
     api.on('didFinishLaunching', this.registerAccessories.bind(this));
