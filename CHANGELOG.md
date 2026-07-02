@@ -1,5 +1,11 @@
 ## Change Log
 
+### v0.4.0 (2026/07/02)
+- chore: Update for Homebridge 2.0 compatibility (`engines.homebridge` now `^1.8.0 || ^2.0.0`, `engines.node` now `^20.18.0 || ^22.10.0 || ^24.0.0`)
+- chore: Stop relying on `global.Service`/`global.Characteristic`/`global.UUIDGen`/`global.Accessory`; use the `api` instance passed to the platform instead
+- chore: Replace deprecated `request` dependency with the native `fetch` API
+- chore: Replace deprecated `.on('get', ...)` characteristic handler with `.onGet(...)`
+
 ### v0.3.7 (2024/07/19 18:24)
 - feature: Add a minimum temperature per zone that has to be reached before it can be considered to be sunny
 

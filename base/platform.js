@@ -1,13 +1,14 @@
-const request = require('request');
-
 const SunAzimuthAccessory = require('./accessory');
 
-let homebridge;
-
 class SunAzimuthPlatform {
-  constructor(log, config) {
+  constructor(log, config, api) {
     this.config = config;
     this.log = log;
+    this.api = api;
+    this.Service = api.hap.Service;
+    this.Characteristic = api.hap.Characteristic;
+    this.uuid = api.hap.uuid;
+    this.PlatformAccessory = api.platformAccessory;
     this.accessories = [];
     this.cachedWeatherObj = undefined;
     this.checkingWeather = false;
@@ -19,11 +20,13 @@ class SunAzimuthPlatform {
     });
 
     // Register new accessories after homebridge loaded
-    homebridge.on('didFinishLaunching', this.registerAccessories.bind(this));
+    api.on('didFinishLaunching', this.registerAccessories.bind(this));
   }
 
   registerAccessories() {
-    const { log, config } = this;
+    const {
+      log, config, api, uuid,
+    } = this;
 
     // set up the weather updater
     if (config.apikey) {
@@ -35,13 +38,13 @@ class SunAzimuthPlatform {
     let tempAccessories = [];
     this.accessories.forEach((accessory) => {
       const configExists = config.sensors.find(
-        (sensor) => UUIDGen.generate(sensor.name) === accessory.UUID,
+        (sensor) => uuid.generate(sensor.name) === accessory.UUID,
       );
 
       if (!configExists) {
         log('Removing existing platform accessory from cache:', accessory.displayName);
         try {
-          homebridge.unregisterPlatformAccessories('homebridge-sun-azimuth', 'Sun Azimuth', [accessory]);
+          api.unregisterPlatformAccessories('homebridge-sun-azimuth', 'Sun Azimuth', [accessory]);
         } catch (e) {
           log('Could not unregister platform accessory!', e);
         }
@@ -70,7 +73,7 @@ class SunAzimuthPlatform {
           || sensorConfig.upperThreshold < -360) {
           log(`Error: Thresholds of sensor ${sensorConfig.name} are not correctly configured. Please refer to the README. Unregistering this cached accessory.`);
           try {
-            homebridge.unregisterPlatformAccessories('homebridge-sun-azimuth', 'Sun Azimuth', [accessory]);
+            api.unregisterPlatformAccessories('homebridge-sun-azimuth', 'Sun Azimuth', [accessory]);
           } catch (e) {
             log('Could not unregister platform accessory!', e);
           }
@@ -82,7 +85,7 @@ class SunAzimuthPlatform {
 
         // this.accessories[index] = this.sensors[accessory.displayName].initializeAccessory();
       });
-      homebridge.updatePlatformAccessories('homebridge-sun-azimuth', 'Sun Azimuth', this.accessories);
+      api.updatePlatformAccessories(this.accessories);
     }
     const configuredAccessories = tempAccessories;
     this.accessories = [];
@@ -90,7 +93,7 @@ class SunAzimuthPlatform {
     // Initialize new accessoroies
     config.sensors.forEach((sensorConfig) => {
       const configured = configuredAccessories.find(
-        (accessory) => accessory.UUID === UUIDGen.generate(sensorConfig.name),
+        (accessory) => accessory.UUID === uuid.generate(sensorConfig.name),
       );
       if (configured) return;
 
@@ -117,7 +120,7 @@ class SunAzimuthPlatform {
 
     // Collect all accessories after initialization to register them with homebridge
     if (this.accessories.length > 0) {
-      homebridge.registerPlatformAccessories('homebridge-sun-azimuth', 'Sun Azimuth', this.accessories);
+      api.registerPlatformAccessories('homebridge-sun-azimuth', 'Sun Azimuth', this.accessories);
     }
   }
 
@@ -126,69 +129,47 @@ class SunAzimuthPlatform {
   }
 
   getWeatherTemperaturCelsius() {
-    var value;
-    if (this.cachedWeatherObj && this.cachedWeatherObj["main"]) {
-      value = parseFloat(this.cachedWeatherObj["main"]["temp"]);
+    let value;
+    if (this.cachedWeatherObj && this.cachedWeatherObj.main) {
+      value = parseFloat(this.cachedWeatherObj.main.temp);
     }
     return value;
-  };
+  }
 
   getWeatherOvercast() {
-    var value;
-    if (this.cachedWeatherObj && this.cachedWeatherObj["clouds"]) {
-      value = parseFloat(this.cachedWeatherObj["clouds"]["all"]);
+    let value;
+    if (this.cachedWeatherObj && this.cachedWeatherObj.clouds) {
+      value = parseFloat(this.cachedWeatherObj.clouds.all);
     }
     return value;
-  };
+  }
 
   getWeather() {
     const { log, config } = this;
 
-    if (this.checkingWeather)
-      return;
+    if (this.checkingWeather) return;
 
     this.checkingWeather = true;
 
-    let p = new Promise((resolve, reject) => {
+    const url = `http://api.openweathermap.org/data/2.5/weather?appid=${config.apikey}&units=metric&lat=${config.lat}&lon=${config.long}`;
+    if (config.debugLog) log('Checking weather: %s', url);
 
-      var url = 'http://api.openweathermap.org/data/2.5/weather?appid=' + config.apikey + '&units=metric&lat=' + config.lat + '&lon=' + config.long;
-      if (config.debugLog)
-        log("Checking weather: %s", url);
+    fetch(url)
+      .then(async (response) => {
+        const responseBody = await response.text();
+        if (config.debugLog) log('Server response:', responseBody);
 
-      request(url, function (error, response, responseBody) {
-        if (error) {
-          log("HTTP get weather function failed: %s", error.message);
-          this.checkingWeather = false;
-          reject(error);
-        } else {
-          try {
-            if (config.debugLog)
-              log("Server response:", responseBody);
+        this.cachedWeatherObj = JSON.parse(responseBody);
 
-            this.cachedWeatherObj = JSON.parse(responseBody);
-
-            log(`Temperature: ${this.getWeatherTemperaturCelsius()}°C, overcast (cloud state): ${this.getWeatherOvercast()}%`);
-
-            resolve(response.statusCode);
-
-            this.checkingWeather = false;
-          } catch (error2) {
-            log("Getting Weather failed: %s", error2, responseBody);
-            this.checkingWeather = false;
-            reject(error2);
-          }
-        }
-      }.bind(this))
-    })
-  };
+        log(`Temperature: ${this.getWeatherTemperaturCelsius()}°C, overcast (cloud state): ${this.getWeatherOvercast()}%`);
+      })
+      .catch((error) => {
+        log('HTTP get weather function failed: %s', error.message);
+      })
+      .finally(() => {
+        this.checkingWeather = false;
+      });
+  }
 }
-
-/**
- * Set homebridge reference for platform, called from /index.js
- * @param {object} homebridgeRef The homebridge reference to use in the platform
- */
-SunAzimuthPlatform.setHomebridge = (homebridgeRef) => {
-  homebridge = homebridgeRef;
-};
 
 module.exports = SunAzimuthPlatform;

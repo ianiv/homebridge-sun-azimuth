@@ -24,10 +24,13 @@ class SunAzimuthAccessory {
   }
 
   initializeAccessory() {
-    const { config } = this;
+    const { config, platform } = this;
+    const {
+      Service, Characteristic, uuid: uuidGen, PlatformAccessory,
+    } = platform;
     const { lowerThreshold, upperThreshold } = config;
-    const uuid = UUIDGen.generate(config.name);
-    const accessory = new Accessory(config.name, uuid);
+    const uuid = uuidGen.generate(config.name);
+    const accessory = new PlatformAccessory(config.name, uuid);
     // Add Device Information
     accessory.getService(Service.AccessoryInformation)
       .setCharacteristic(Characteristic.Manufacturer, 'mfkrause, Krillle & awaescher')
@@ -50,7 +53,8 @@ class SunAzimuthAccessory {
   }
 
   setAccessoryEventHandlers() {
-    const { log } = this;
+    const { log, platform } = this;
+    const { Service, Characteristic } = platform;
 
     this.getAccessory().on('identify', (paired, callback) => {
       log(this.getAccessory().displayName, `Identify sensor, paired: ${paired}`);
@@ -62,7 +66,7 @@ class SunAzimuthAccessory {
     if (SensorService) {
       SensorService
         .getCharacteristic(Characteristic.ContactSensorState)
-        .on('get', this.getState.bind(this));
+        .onGet(this.getState.bind(this));
 
       SensorService.setCharacteristic(Characteristic.ContactSensorState, this.updateState());
       setInterval(() => {
@@ -129,13 +133,14 @@ class SunAzimuthAccessory {
     return newState;
   }
 
-  getState(callback) {
+  getState() {
     const { platformConfig, log } = this;
     const newState = this.updateState();
 
-    callback(null, newState);
     if (platformConfig.debugLog)
       log(this.getAccessory().displayName, `State: ${newState}`);
+
+    return newState;
   }
 
 }
