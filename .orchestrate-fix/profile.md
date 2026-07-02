@@ -1,5 +1,4 @@
 # orchestrate-fix profile — homebridge-sun-azimuth
-
 - **Ticket source:** GitHub issues via `gh issue view <n>` / `gh issue create`. Repo `ianiv/homebridge-sun-azimuth`.
 - **Isolation:** git worktrees. Controller runs in a worktree under `.claude/worktrees/`. Fixers get their own isolated worktree (Agent `isolation: "worktree"`), branched from `origin/master`.
 - **Build/typecheck gate:** node (v24) + npm (v11) ARE available. No lint/test/build scripts are defined in package.json (only `nodemon.json` for dev auto-restart) and there is no CI. Gate = `npm install` resolves cleanly + `node --check` on changed `.js` files + `node -e "require('./index')"` smoke-loads the plugin.
