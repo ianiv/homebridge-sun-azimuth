@@ -1,5 +1,8 @@
 ## Change Log
 
+### v0.4.1 (2026/07/02)
+- chore: Update suncalc to v2.0.0. suncalc 2.x returns sun azimuth/altitude directly in degrees (azimuth clockwise from north: 0=N, 90=E, 180=S, 270=W) instead of radians, so the manual radians-to-degrees conversion has been removed
+
 ### v0.4.0 (2026/07/02)
 - chore: Update for Homebridge 2.0 compatibility (`engines.homebridge` now `^1.8.0 || ^2.0.0`, `engines.node` now `^20.18.0 || ^22.10.0 || ^24.0.0`)
 - chore: Stop relying on `global.Service`/`global.Characteristic`/`global.UUIDGen`/`global.Accessory`; use the `api` instance passed to the platform instead

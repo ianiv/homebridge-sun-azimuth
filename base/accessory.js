@@ -86,9 +86,11 @@ class SunAzimuthAccessory {
       return 0;
     }
 
+    // suncalc 2.x returns azimuth/altitude directly in degrees (azimuth clockwise from
+    // north: 0=N, 90=E, 180=S, 270=W; altitude 0=horizon, 90=zenith), so no unit conversion is needed.
     const sunPos = suncalc.getPosition(Date.now(), lat, long);
-    let sunPosDegrees = Math.abs((sunPos.azimuth * 180) / Math.PI + 180);
-    let sunPosAltitude = sunPos.altitude * 90 / (Math.PI / 2);
+    let sunPosDegrees = sunPos.azimuth;
+    let sunPosAltitude = sunPos.altitude;
 
     if (platformConfig.debugLog)
       log(`${name}: Current azimuth: ${sunPosDegrees}°, altitude: ${sunPosAltitude}°`);
