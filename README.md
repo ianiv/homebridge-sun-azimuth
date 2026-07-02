@@ -49,5 +49,5 @@ Define contact sensors for one or more sections of the sky, e.g. for windows loo
 
 **Thresholds example**: If you want the sensor to turn on when the sun is between 0° and 90° azimuth, set the lower threshold to 0 and the upper threshold to 90. See the example configuration file for a basic set-up (north, east, south, west).
 
-For help or in case of issues please visit the [GitHub repository](https://github.com/awaescher/homebridge-sun-azimuth/issues).    
+For help or in case of issues please visit the [GitHub repository](https://github.com/ianiv/homebridge-sun-azimuth/issues).    
 This plugin is based  on [homebridge-sunsensors](https://github.com/mfkrause/homebridge-sunsensors) and [homebridge-sunlight](https://github.com/Krillle/homebridge-sunlight)..
