@@ -1,8 +1,5 @@
 ## Change Log
 
-### v0.4.2 (2026/07/02)
-- fix: Default the weather update interval to 60s when `weatherUpdateIntervalSeconds` is unset, preventing a NaN interval that polled OpenWeather continuously (#4)
-
 ### v0.4.1 (2026/07/02)
 - chore: Update suncalc to v2.0.0. suncalc 2.x returns sun azimuth/altitude directly in degrees (azimuth clockwise from north: 0=N, 90=E, 180=S, 270=W) instead of radians, so the manual radians-to-degrees conversion has been removed
 
