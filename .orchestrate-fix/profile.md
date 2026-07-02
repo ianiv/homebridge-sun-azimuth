@@ -42,4 +42,3 @@
 ## Notes / open questions
 - TODO: This is a tiny, config-less JS project — the pipeline's "build gate" step will effectively be a no-op syntax check. If the user later adds TypeScript/ESLint/tests, re-run `orchestrate-fix-init` to pick up the new gate.
 - TODO: No `code-reviewer` subagent is available in this environment — reviewer role uses general-purpose. If a dedicated review agent becomes available, rebind here.
-- `package.json` `repository.url`/`bugs.url`, `README.md`, and `config.schema.json` now point to `ianiv/homebridge-sun-azimuth` (updated 2026-07-02; previously pointed to the upstream fork `awaescher/homebridge-sun-azimuth`).
