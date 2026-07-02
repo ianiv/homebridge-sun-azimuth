@@ -6,7 +6,9 @@
 
 # Homebridge Sun Azimuth
 
-This is a plugin for [homebridge](https://github.com/nfarina/homebridge). It provides contact sensors based on sun position and clouds to automate sun protection. Sensors are opened when the sun is in a defined section of the sky (azimuth) and optionally if an [OpenWeather API key](https://openweathermap.org/api) is provided when the sky is not overcast and sun is above the horizon.
+This is a plugin for [homebridge](https://github.com/homebridge/homebridge). It provides contact sensors based on sun position and clouds to automate sun protection. Sensors are opened when the sun is in a defined section of the sky (azimuth) and optionally if an [OpenWeather API key](https://openweathermap.org/api) is provided when the sky is not overcast and sun is above the horizon.
+
+Compatible with Homebridge v1.8+ and v2.0+.
 
 # Installation
 Intall via hombridge GUI [homebridge-config-ui-x](https://github.com/oznu/homebridge-config-ui-x) or manually via:
