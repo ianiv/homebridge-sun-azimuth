@@ -31,7 +31,9 @@ class SunAzimuthPlatform {
     // set up the weather updater
     if (config.apikey) {
       this.getWeather();
-      setInterval(() => { this.getWeather(); }, config.weatherUpdateIntervalSeconds * 1000);
+      const intervalSeconds = config.weatherUpdateIntervalSeconds > 0
+        ? config.weatherUpdateIntervalSeconds : 60;
+      setInterval(() => { this.getWeather(); }, intervalSeconds * 1000);
     }
 
     // Unregister removed accessories first
