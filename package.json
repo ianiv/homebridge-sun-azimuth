@@ -33,10 +33,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/awaescher/homebridge-sun-azimuth.git"
+    "url": "git://github.com/ianiv/homebridge-sun-azimuth.git"
   },
   "bugs": {
-    "url": "https://github.com/awaescher/homebridge-sun-azimuth/issues"
+    "url": "https://github.com/ianiv/homebridge-sun-azimuth/issues"
   },
   "license": "Apache-2.0",
   "dependencies": {
