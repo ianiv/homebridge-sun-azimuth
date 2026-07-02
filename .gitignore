@@ -43,3 +43,7 @@ jspm_packages/
 # Mac OS X system files
 .DS_Store
 ._*
+
+# orchestrate-fix runtime state (profile.md is intentionally tracked)
+.orchestrate-fix/session.json
+.orchestrate-fix/knowledge/
