@@ -77,8 +77,8 @@ class SunAzimuthAccessory {
 
   updateState() {
     const { config, platformConfig, log } = this;
-    const { lat, long, apikey, enableWeatherIntegration, highestAcceptableOvercast } = platformConfig;
-    const { name, lowerThreshold, upperThreshold, minimumTemperatureCelsuisConsideredSunny, lowerAltitudeThreshold, upperAltitudeThreshold } = config;
+    const { lat, long, apikey, enableWeatherIntegration, highestAcceptableOvercast = 25 } = platformConfig;
+    const { name, lowerThreshold = 0, upperThreshold = 0, minimumTemperatureCelsuisConsideredSunny = 20, lowerAltitudeThreshold = 0, upperAltitudeThreshold = 90 } = config;
     const azimuthThresholds = [lowerThreshold, upperThreshold];
 
     if (!lat || !long || typeof lat !== 'number' || typeof long !== 'number') {
