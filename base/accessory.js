@@ -130,7 +130,7 @@ class SunAzimuthAccessory {
       }
     }
 
-    return newState;
+    return newState ? 1 : 0;
   }
 
   getState() {
